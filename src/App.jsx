@@ -1,11 +1,14 @@
-import { useState } from "react";
-import { RotateCcw, Sparkle } from "lucide-react";
+import { useState, useRef } from "react";
+import { RotateCcw, Sparkle, Minimize, Maximize } from "lucide-react";
 import { Counter } from "./components";
 
 export default function App() {
   const [unitPowers, setUnitPowers] = useState(Array(6).fill(0));
   const [selectingPower, setSelectingPower] = useState(5000);
   const standardPowerSet = [1000, 5000, 10000, 1000000];
+
+  const appRef = useRef(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const increaseAll = () => {
     setUnitPowers((prev) => prev.map((p) => p + selectingPower));
@@ -28,8 +31,48 @@ export default function App() {
   const increaseOne = (index) => updateOne(index, 1);
   const decreaseOne = (index) => updateOne(index, -1);
 
+  // Toggle full screen mode
+  const handleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      if (appRef.current.requestFullscreen) {
+        appRef.current.requestFullscreen();
+      } else if (appRef.current.webkitRequestFullscreen) {
+        /* Safari */
+        appRef.current.webkitRequestFullscreen();
+      } else if (appRef.current.msRequestFullscreen) {
+        /* IE11 */
+        appRef.current.msRequestFullscreen();
+      }
+      setIsFullScreen(true);
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        /* Safari */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        /* IE11 */
+        document.msExitFullscreen();
+      }
+      setIsFullScreen(false);
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center h-screen p-2 bg-gray-950 text-white font-inter overflow-hidden">
+    <div
+      ref={appRef}
+      className="relative flex flex-col items-center justify-center h-screen p-2 bg-gray-950 text-white font-inter overflow-hidden"
+    >
+      <div className="flex flex-row-reverse w-full absolute bottom-0 p-5 z-10 opacity-50">
+        <button
+          onClick={handleFullScreen}
+          className="p-2 rounded-full bg-gray-800 text-white hover:bg-gray-700 transition-colors duration-200"
+          aria-label="Toggle full screen"
+        >
+          {isFullScreen ? <Minimize size={20} /> : <Maximize size={20} />}
+        </button>
+      </div>
+
       {/* Control buttons container */}
       <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
         {standardPowerSet.map((power) => {
@@ -44,7 +87,7 @@ export default function App() {
                   : "bg-indigo-500 hover:bg-indigo-600 hover:scale-105"
               }`}
             >
-              +{power / 1000}K
+              {power / 1000}K
             </button>
           );
         })}
@@ -61,7 +104,7 @@ export default function App() {
           className="relative px-3 py-1 sm:px-6 sm:py-3 text-xs sm:text-lg font-semibold rounded-full bg-yellow-400 hover:bg-yellow-500 transition-all duration-300 transform hover:scale-105 shadow-lg active:scale-95 flex items-center gap-1 sm:gap-2"
         >
           <Sparkle size={12} sm:size={16} />
-          <span>Ride</span>
+          <span>PR</span>
         </button>
 
         <button

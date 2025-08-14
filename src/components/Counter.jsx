@@ -1,8 +1,13 @@
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, Sparkle } from "lucide-react";
 
 const Counter = ({ power, index, onIncrease, onDecrease }) => {
+  const containerClasses = `flex flex-col items-center justify-center p-2 xs:p-4 rounded-lg xs:rounded-2xl shadow-xl border-2 backdrop-blur-sm bg-opacity-70 ${
+    index === 1
+      ? "bg-gray-600 border-blue-500"
+      : "bg-gray-800 border-yellow-700"
+  }`;
   return (
-    <div className="flex flex-col items-center justify-center p-2 sm:p-4 bg-gray-800 rounded-lg sm:rounded-2xl shadow-xl border-2 border-gray-700 backdrop-blur-sm bg-opacity-70">
+    <div className={containerClasses}>
       <div className="text-4xl sm:text-6xl font-bold tracking-tight text-white mb-1">
         {power}
       </div>
