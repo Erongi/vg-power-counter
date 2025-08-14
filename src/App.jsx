@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { RotateCcw, Sparkle, Minimize, Maximize } from "lucide-react";
 import { Counter } from "./components";
 
@@ -9,6 +9,43 @@ export default function App() {
 
   const appRef = useRef(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [wakeLock, setWakeLock] = useState(null);
+
+  // Request a wake lock to keep the screen on
+  const requestWakeLock = async () => {
+    try {
+      if ("wakeLock" in navigator) {
+        const lock = await navigator.wakeLock.request("screen");
+        setWakeLock(lock);
+        console.log("Wake lock active");
+      }
+    } catch (err) {
+      console.error("Wake lock request failed:", err.name, err.message);
+    }
+  };
+
+  // Release the wake lock
+  const releaseWakeLock = async () => {
+    if (wakeLock) {
+      await wakeLock.release();
+      setWakeLock(null);
+      console.log("Wake lock released");
+    }
+  };
+
+  // Listen for fullscreen changes to release the wake lock if the user exits manually
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        setIsFullScreen(false);
+        releaseWakeLock();
+      }
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, [wakeLock]);
 
   const increaseAll = () => {
     setUnitPowers((prev) => prev.map((p) => p + selectingPower));
@@ -44,6 +81,7 @@ export default function App() {
         appRef.current.msRequestFullscreen();
       }
       setIsFullScreen(true);
+      requestWakeLock();
     } else {
       if (document.exitFullscreen) {
         document.exitFullscreen();
@@ -54,14 +92,12 @@ export default function App() {
         /* IE11 */
         document.msExitFullscreen();
       }
-      setIsFullScreen(false);
     }
   };
-
   return (
     <div
       ref={appRef}
-      className="relative flex flex-col items-center justify-center h-screen p-2 bg-gray-950 text-white font-inter overflow-hidden"
+      className="relative flex flex-col items-center justify-center h-screen p-2 bg-gray-950 text-white font-inter overflow-auto"
     >
       <div className="flex flex-row-reverse w-full absolute bottom-0 p-5 z-10 opacity-50">
         <button
