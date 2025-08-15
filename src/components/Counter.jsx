@@ -3,7 +3,7 @@ import { Plus, Minus } from "lucide-react";
 const Counter = ({ power, index, onIncrease, onDecrease }) => {
   const containerClasses = `flex flex-col items-center justify-center p-2 xs:p-4 rounded-lg xs:rounded-2xl shadow-xl border-2 backdrop-blur-sm bg-opacity-70 ${
     index === 1
-      ? "bg-gray-600 border-blue-500"
+      ? "bg-gray-700 border-blue-500"
       : "bg-gray-800 border-yellow-700"
   }`;
   return (

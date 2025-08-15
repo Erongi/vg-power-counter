@@ -99,15 +99,13 @@ export default function App() {
       ref={appRef}
       className="relative flex flex-col items-center justify-center h-screen p-2 bg-gray-950 text-white font-inter overflow-auto"
     >
-      <div className="flex flex-row-reverse w-full absolute bottom-0 p-5 z-10 opacity-50">
-        <button
-          onClick={handleFullScreen}
-          className="p-2 rounded-full bg-gray-800 text-white hover:bg-gray-700 transition-colors duration-200"
-          aria-label="Toggle full screen"
-        >
-          {isFullScreen ? <Minimize size={20} /> : <Maximize size={20} />}
-        </button>
-      </div>
+      <button
+        onClick={handleFullScreen}
+        className="absolute bottom-2 right-2 p-2 z-10 opacity-50 rounded-full bg-gray-800 text-white hover:bg-gray-700 transition-colors duration-200"
+        aria-label="Toggle full screen"
+      >
+        {isFullScreen ? <Minimize size={20} /> : <Maximize size={20} />}
+      </button>
 
       {/* Control buttons container */}
       <div className="flex flex-wrap items-center justify-center gap-3 mb-4">
